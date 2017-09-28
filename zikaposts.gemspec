@@ -13,6 +13,7 @@ Gem::Specification.new do |spec|
   spec.description   = %q{Parte de projeto de pesquisa}
   spec.homepage      = "https://github.com/edusantana/zikaposts"
   spec.license       = "MIT"
+ 
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
@@ -35,4 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
 
   spec.add_dependency "twitter", "~> 6.1"
+  spec.add_dependency "sqlite3"
+  spec.add_dependency "mongo", "~> 2.4"
+  
 end
