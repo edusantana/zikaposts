@@ -1,5 +1,41 @@
 #!/usr/bin/env ruby
 
+require "twitter"
 require 'pg'
 
 puts 'Version of libpg: ' + PG.library_version.to_s
+
+client = Twitter::Streaming::Client.new do |config|
+    config.consumer_key        = ENV["CONSUMER_KEY"]
+    config.consumer_secret     = ENV["CONSUMER_SECRET"]
+    config.access_token        = ENV["ACCESS_TOKEN"]
+    config.access_token_secret = ENV["ACCESS_SECRET"]
+end
+  
+  #topics = ["zika"]
+  topics = ["anitta"]
+
+begin
+    con = PG.connect :dbname => ENV['DB_NAME'], :user => ENV['USER']
+    puts con.server_version
+    
+    # con.exec "CREATE TABLE tweets ( texto TEXT, data  TIMESTAMP, dados jsonb)"
+    # con.exec "select * from tweets"
+
+    con.prepare('tweet_insert', 'insert into tweets (texto, data, dados) values ($1, $2, $3)')
+
+  client.filter(track: topics.join(",")) do |object|
+  
+    if object.is_a?(Twitter::Tweet) then
+      puts object.to_h.to_json
+      con.exec_prepared('tweet_insert', [ object.full_text, object.created_at, object.to_h.to_json ])
+    end
+    #puts JSON.generate(t)
+    #puts object.to_json
+  end
+  
+rescue PG::Error => e
+    puts e.message 
+ensure
+    con.close if con
+end
