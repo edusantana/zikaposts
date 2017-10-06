@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'zikaposts'
-puts "oi"
+require 'pg'
+
+puts 'Version of libpg: ' + PG.library_version.to_s

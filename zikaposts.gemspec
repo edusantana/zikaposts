@@ -36,7 +36,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
 
   spec.add_dependency "twitter", "~> 6.1"
-  spec.add_dependency "sqlite3"
-  spec.add_dependency "mongo", "~> 2.4"
+  spec.add_dependency "pg"
   
 end
