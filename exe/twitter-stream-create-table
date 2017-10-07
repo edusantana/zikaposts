@@ -1,7 +1,7 @@
 # Ver:
 # http://zetcode.com/db/postgresqlruby/
 
-sudo -u postgres createdb tweeter --owner $USER
+sudo -u postgres createdb twitter --owner $USER
+psql -d twitter -c "CREATE TABLE TWEETS ( texto TEXT, data  TIMESTAMP, dados jsonb);"
 
-
-# CREATE TABLE TWEETS ( texto TEXT NOT NULL, data  TIMESTAMP, dados jsonb);
+# 

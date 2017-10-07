@@ -2,40 +2,72 @@
 
 require "twitter"
 require 'pg'
+require 'logger'  
 
-puts 'Version of libpg: ' + PG.library_version.to_s
 
-client = Twitter::Streaming::Client.new do |config|
+@logger = Logger.new('zika.log', 'monthly')
+@logger.info 'Version of libpg: ' + PG.library_version.to_s
+@logger.info 'Configuração: ' + {:dbname => ENV['DB_NAME'], :user => ENV['USER']}.to_s
+
+def aguarda_tempo_de_reconecao 
+  @logger.info "Aguardando tempo pare conectar."
+end
+def inicia_cliente_twitter
+  client = Twitter::Streaming::Client.new do |config|
     config.consumer_key        = ENV["CONSUMER_KEY"]
     config.consumer_secret     = ENV["CONSUMER_SECRET"]
     config.access_token        = ENV["ACCESS_TOKEN"]
     config.access_token_secret = ENV["ACCESS_SECRET"]
-end
-  
-  #topics = ["zika"]
-  topics = ["anitta"]
-
-begin
-    con = PG.connect :dbname => ENV['DB_NAME'], :user => ENV['USER']
-    puts con.server_version
-    
-    # con.exec "CREATE TABLE tweets ( texto TEXT, data  TIMESTAMP, dados jsonb)"
-    # con.exec "select * from tweets"
-
-    con.prepare('tweet_insert', 'insert into tweets (texto, data, dados) values ($1, $2, $3)')
-
-  client.filter(track: topics.join(",")) do |object|
-  
-    if object.is_a?(Twitter::Tweet) then
-      puts object.to_h.to_json
-      con.exec_prepared('tweet_insert', [ object.full_text, object.created_at, object.to_h.to_json ])
-    end
-    #puts JSON.generate(t)
-    #puts object.to_json
   end
-  
-rescue PG::Error => e
-    puts e.message 
-ensure
-    con.close if con
+  client
 end
+def conecta_banco_de_dados
+  con = PG.connect :dbname => ENV['DB_NAME'], :user => ENV['USER']
+  @logger.info("Versão do servidor: " + con.server_version.to_s)
+  
+  # con.exec "CREATE TABLE tweets ( texto TEXT, data  TIMESTAMP, dados jsonb)"
+  # con.exec "select * from tweets"
+
+  con.prepare('tweet_insert', 'insert into tweets (texto, data, dados) values ($1, $2, $3)')
+  @logger.info("Coneção com banco de dados estabelecida com sucesso.")
+
+  con
+end
+
+def salva_tweet(con, object)
+  @logger.info(object.to_h.to_json)
+  con.exec_prepared('tweet_insert', [ object.full_text, object.created_at, object.to_h.to_json ])
+end
+
+@count = 0
+
+while true do
+
+  begin
+    aguarda_tempo_de_reconecao
+    client = inicia_cliente_twitter
+    con = conecta_banco_de_dados
+
+    #topics = ["zika"]
+    # zika, zica, zyca, zkv, ZikaV, 
+    # Chikungunya, Chicungunya, dengue
+    #topics = ["anitta"] # muitos tópicos
+    topics = ['zika', 'zica', 'zyca', 'zkv', 'ZikaV']
+    @logger.info("Iniciando filtro dos seguintes tópicos: " + topics.to_s)
+    client.filter(track: topics.join(",")) do |object|
+    
+      if object.is_a?(Twitter::Tweet) then
+        puts @count.to_s + ": " + Time.new.to_s
+        salva_tweet(con, object)
+        @count = @count + 1
+      end
+    end
+  rescue PG::Error => e
+    @logger.error(e.message)
+  ensure
+    con.close if con
+  end
+    
+
+end
+
