@@ -29,6 +29,11 @@ Or install it yourself as:
 
     $ gem install zikaposts
 
+
+### Configurar serviço
+
+Ver http://upstart.ubuntu.com/cookbook.
+
 ## Usage
 
 TODO: Write usage instructions here

@@ -4,6 +4,7 @@ require "twitter"
 require 'pg'
 require 'logger'  
 
+puts "Iniciando twitter-stream"
 
 @logger = Logger.new('zika.log', 'monthly')
 @logger.info 'Version of libpg: ' + PG.library_version.to_s
