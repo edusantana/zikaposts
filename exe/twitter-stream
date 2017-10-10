@@ -65,6 +65,7 @@ while true do
     end
   rescue PG::Error => e
     @logger.error(e.message)
+    raise e
   ensure
     con.close if con
   end
