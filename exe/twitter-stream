@@ -53,7 +53,7 @@ while true do
     # zika, zica, zyca, zkv, ZikaV, 
     # Chikungunya, Chicungunya, dengue
     #topics = ["anitta"] # muitos tópicos
-    topics = ['zika', 'zica', 'zyca', 'zkv', 'ZikaV']
+    topics = ['zika', 'zica', 'zyca', 'zkv', 'ZikaV', 'Chikungunya', 'Chicungunya', 'dengue']
     @logger.info("Iniciando filtro dos seguintes tópicos: " + topics.to_s)
     client.filter(track: topics.join(",")) do |object|
     
