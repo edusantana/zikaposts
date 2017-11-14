@@ -9,10 +9,6 @@ TODO: Delete this and the text above, and describe your gem
 Ajuda pode ser consultada em [https://github.com/sferik/twitter](https://github.com/sferik/twitter)
 
 
-Configurando as chaves e tokens:
-
-    source config/config_keys.sh
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -29,6 +25,15 @@ Or install it yourself as:
 
     $ gem install zikaposts
 
+## Executando o cliente
+
+Para configurar o cliente é necessário configurar variáveis de ambiente:
+
+    source config/config_keys.sh
+
+Depois
+
+    exe/twitter-stream
 
 ### Configurar serviço
 

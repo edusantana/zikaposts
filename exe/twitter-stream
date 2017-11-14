@@ -36,7 +36,7 @@ def conecta_banco_de_dados
 end
 
 def salva_tweet(con, object)
-  @logger.info(object.to_h.to_json)
+  # @logger.info(object.to_h.to_json)
   con.exec_prepared('tweet_insert', [ object.full_text, object.created_at, object.to_h.to_json ])
 end
 
